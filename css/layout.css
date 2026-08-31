@@ -1,0 +1,139 @@
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.container--wide {
+  max-width: var(--container-wide);
+}
+
+.section {
+  position: relative;
+  padding: var(--section-padding) 0;
+}
+
+.section--dark {
+  color: var(--color-white);
+  background-color: var(--color-black);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.section--ivory {
+  background-color: var(--color-ivory);
+}
+
+.section__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 1.5rem;
+}
+
+.section--dark .section__label {
+  color: var(--color-accent);
+}
+
+.section__headline {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 1.5rem;
+}
+
+.section__headline span {
+  display: block;
+}
+
+.section__desc {
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  color: var(--color-gray-600);
+  max-width: 540px;
+}
+
+.section--dark .section__desc {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.media-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.media-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bg-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background-color: var(--color-black);
+}
+
+.bg-media__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--color-overlay);
+  pointer-events: none;
+}
+
+.bg-media__poster {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bg-media__video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.bg-media__video.is-ready {
+  opacity: 1;
+}
+
+.bg-media__video.is-fallback {
+  display: none;
+}
+
+.section__content {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}

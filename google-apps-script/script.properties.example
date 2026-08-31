@@ -1,0 +1,5 @@
+# Google Apps Script → 프로젝트 설정 → 스크립트 속성에 아래 키를 등록하세요.
+# 이 파일은 GitHub에 올려도 됩니다 (실제 값 없음).
+
+SHEET_NAME=your-sheet-tab-name
+ADMIN_EMAIL=your-email@example.com

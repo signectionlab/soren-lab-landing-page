@@ -1,0 +1,26 @@
+:root {
+  --color-black: #0a0a0a;
+  --color-white: #ffffff;
+  --color-ivory: #f5f0eb;
+  --color-gray-100: #f7f7f7;
+  --color-gray-200: #e8e8e8;
+  --color-gray-400: #999999;
+  --color-gray-600: #666666;
+  --color-accent: #c4b5d4;
+  --color-overlay: rgba(10, 10, 10, 0.45);
+  --color-overlay-light: rgba(10, 10, 10, 0.25);
+
+  --font-display: "Syne", "Noto Sans KR", sans-serif;
+  --font-body: "Noto Sans KR", sans-serif;
+
+  --container-max: 1200px;
+  --container-wide: 1400px;
+  --section-padding: clamp(5rem, 10vw, 8rem);
+  --header-height: 72px;
+
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}

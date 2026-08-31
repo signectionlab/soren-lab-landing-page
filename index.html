@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOREN LAB | Beauty, Refined.</title>
+  <meta name="description" content="SOREN LAB은 화장품 R&D, 제형 개발, OEM·ODM을 전문으로 하는 뷰티 테크놀로지 기업입니다.">
+  <meta name="keywords" content="SOREN LAB, 화장품 OEM, 화장품 ODM, 뷰티 R&D, 화장품 제조, 스킨케어 개발, 뷰티 테크놀로지">
+  <meta property="og:title" content="SOREN LAB | Beauty, Refined.">
+  <meta property="og:description" content="SOREN LAB은 화장품 R&D, 제형 개발, OEM·ODM을 전문으로 하는 뷰티 테크놀로지 기업입니다.">
+  <meta property="og:image" content="assets/images/hero.jpeg">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header header--dark" id="header">
+    <div class="header__inner">
+      <a href="#" class="header__logo">SOREN LAB</a>
+      <nav class="nav" aria-label="주요 메뉴">
+        <ul class="nav__list">
+          <li><a href="#about" class="nav__link" data-section="about">소개</a></li>
+          <li><a href="#technology" class="nav__link" data-section="technology">기술</a></li>
+          <li><a href="#product" class="nav__link" data-section="product">제품</a></li>
+          <li><a href="#capabilities" class="nav__link" data-section="capabilities">역량</a></li>
+          <li><a href="#contact" class="nav__link" data-section="contact">문의</a></li>
+        </ul>
+        <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="nav__overlay" id="navOverlay" aria-hidden="true">
+    <a href="#about" class="nav__link" data-section="about">소개</a>
+    <a href="#technology" class="nav__link" data-section="technology">기술</a>
+    <a href="#product" class="nav__link" data-section="product">제품</a>
+    <a href="#capabilities" class="nav__link" data-section="capabilities">역량</a>
+    <a href="#contact" class="nav__link" data-section="contact">문의</a>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="bg-media">
+        <img class="bg-media__poster" src="assets/images/hero.jpeg" alt="" aria-hidden="true">
+        <video class="bg-media__video" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="assets/images/hero.jpeg" data-video="hero">
+          <source src="assets/video/hydra_cream_03.mp4" type="video/mp4">
+        </video>
+        <div class="bg-media__overlay"></div>
+      </div>
+      <div class="hero__content">
+        <h1 class="hero__title">SOREN LAB</h1>
+        <p class="hero__tagline">Beauty, Refined.</p>
+        <p class="hero__sub">
+          <span>아름다움을 연구하고,</span>
+          <span>더 정교하게 설계합니다.</span>
+        </p>
+        <a href="#about" class="btn">둘러보기 →</a>
+      </div>
+      <div class="hero__scroll" aria-hidden="true">
+        <span>스크롤</span>
+        <div class="hero__scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="grid-2">
+          <div class="reveal">
+            <p class="section__label">소개</p>
+            <h2 class="section__headline">
+              <span>화장품을 만드는 것을 넘어,</span>
+              <span>아름다움을 정교하게 완성합니다.</span>
+            </h2>
+            <p class="section__desc">
+              SOREN LAB은 화장품 R&D, 제형 개발, OEM·ODM을 전문으로 하는 뷰티 테크놀로지 기업입니다. 원료 연구에서 제형 설계, 감각적인 텍스처 구현까지 — 피부 과학을 더 아름다운 경험으로 전환합니다.
+            </p>
+            <div class="stats">
+              <div class="stat">
+                <div class="stat__number" data-count="18">0</div>
+                <div class="stat__label">년</div>
+              </div>
+              <div class="stat">
+                <div class="stat__number" data-count="320">0</div>
+                <div class="stat__label">제형</div>
+              </div>
+              <div class="stat">
+                <div class="stat__number" data-count="42">0</div>
+                <div class="stat__label">파트너</div>
+              </div>
+              <div class="stat">
+                <div class="stat__number" data-count="17">0</div>
+                <div class="stat__label">국가</div>
+              </div>
+            </div>
+          </div>
+          <div class="reveal reveal-delay-2">
+            <div class="media-wrap image-reveal" style="aspect-ratio: 4/5;">
+              <img src="assets/images/mood02.jpeg" alt="SOREN LAB 연구실" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECHNOLOGY -->
+    <section class="section section--dark" id="technology">
+      <div class="bg-media">
+        <img class="bg-media__poster" src="assets/images/texure_cream.jpeg" alt="" aria-hidden="true">
+        <video class="bg-media__video" autoplay muted loop playsinline preload="auto" poster="assets/images/texure_cream.jpeg" data-video="tech">
+          <source src="assets/video/model_serum.mp4" type="video/mp4">
+        </video>
+        <div class="bg-media__overlay"></div>
+      </div>
+      <div class="container section__content">
+        <div class="reveal">
+          <p class="section__label">기술</p>
+          <h2 class="section__headline">과학이 형태를 만듭니다.</h2>
+        </div>
+        <div class="tech-grid">
+          <div class="tech-card reveal reveal-delay-1">
+            <p class="tech-card__num">01</p>
+            <h3 class="tech-card__title">SOREN DELIVERY™</h3>
+            <p class="tech-card__desc">유효성분이 피부에 보다 효율적으로 전달될 수 있도록 설계하는 제형 기술입니다.</p>
+          </div>
+          <div class="tech-card reveal reveal-delay-2">
+            <p class="tech-card__num">02</p>
+            <h3 class="tech-card__title">AQUA-MESH™</h3>
+            <p class="tech-card__desc">피부에 수분을 균일하게 공급하고 유지하는 수분 네트워크 기술입니다.</p>
+          </div>
+          <div class="tech-card reveal reveal-delay-3">
+            <p class="tech-card__num">03</p>
+            <h3 class="tech-card__title">SILK-FORM™</h3>
+            <p class="tech-card__desc">가볍고 부드러운 사용감을 구현하기 위한 텍스처 기술입니다.</p>
+          </div>
+        </div>
+        <div class="tech-images">
+          <div class="media-wrap image-reveal reveal">
+            <img src="assets/images/texure_cream.jpeg" alt="크림 제형 텍스처" loading="lazy">
+          </div>
+          <div class="media-wrap image-reveal reveal reveal-delay-1">
+            <img src="assets/images/waterful.jpeg" alt="세럼 원료 매크로" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT -->
+    <section class="section section--ivory" id="product">
+      <div class="container">
+        <div class="product-brand reveal">
+          <h2 class="product-brand__name">NERA</h2>
+          <p class="product-brand__tagline">피부, 본연의 균형으로</p>
+        </div>
+        <div class="grid-3">
+          <article class="product-card reveal" data-product="deep01" tabindex="0" role="button" aria-label="NERA DEEP 01 상세 보기">
+            <div class="product-card__image">
+              <img src="assets/images/product_serum.jpeg" alt="NERA DEEP 01 딥 하이드레이션 세럼" loading="lazy">
+            </div>
+            <p class="product-card__code">DEEP 01</p>
+            <h3 class="product-card__name">딥 하이드레이션 세럼</h3>
+            <p class="product-card__type">수분, 정교하게.</p>
+          </article>
+          <article class="product-card reveal reveal-delay-1" data-product="barrier02" tabindex="0" role="button" aria-label="NERA BARRIER 02 상세 보기">
+            <div class="product-card__image">
+              <img src="assets/images/product_hydra.jpeg" alt="NERA BARRIER 02 배리어 크림" loading="lazy">
+            </div>
+            <p class="product-card__code">BARRIER 02</p>
+            <h3 class="product-card__name">배리어 크림</h3>
+            <p class="product-card__type">균형이 장벽을 만듭니다.</p>
+          </article>
+          <article class="product-card reveal reveal-delay-2" data-product="calm03" tabindex="0" role="button" aria-label="NERA CALM 03 상세 보기">
+            <div class="product-card__image">
+              <img src="assets/images/product_essense.jpeg" alt="NERA CALM 03 캄 에센스" loading="lazy">
+            </div>
+            <p class="product-card__code">CALM 03</p>
+            <h3 class="product-card__name">캄 에센스</h3>
+            <p class="product-card__type">편안함, 곧 케어입니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAPABILITIES -->
+    <section class="section" id="capabilities">
+      <div class="container">
+        <div class="grid-2">
+          <div class="reveal">
+            <p class="section__label">역량</p>
+            <h2 class="section__headline">
+              <span>아이디어에서</span>
+              <span>제품까지.</span>
+            </h2>
+            <p class="section__desc">
+              B2B 파트너의 제품 개발을 처음부터 끝까지 지원합니다. 연구, 제형 개발, 샘플 제작, 품질 관리, 생산까지 하나의 시스템으로 연결합니다.
+            </p>
+            <div class="process">
+              <div class="process__step">
+                <div class="process__num">01</div>
+                <div class="process__label">아이디어</div>
+              </div>
+              <div class="process__step">
+                <div class="process__num">02</div>
+                <div class="process__label">연구</div>
+              </div>
+              <div class="process__step">
+                <div class="process__num">03</div>
+                <div class="process__label">제형</div>
+              </div>
+              <div class="process__step">
+                <div class="process__num">04</div>
+                <div class="process__label">샘플</div>
+              </div>
+              <div class="process__step">
+                <div class="process__num">05</div>
+                <div class="process__label">생산</div>
+              </div>
+            </div>
+          </div>
+          <div class="reveal reveal-delay-2">
+            <div class="capability-images">
+              <div class="media-wrap image-reveal">
+                <img src="assets/images/product_studio.jpeg" alt="제품 개발 및 제조" loading="lazy">
+              </div>
+              <div class="media-wrap image-reveal">
+                <img src="assets/images/model02.jpeg" alt="품질 관리 및 피부 연구" loading="lazy">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GLOBAL -->
+    <section class="section section--dark" id="global">
+      <div class="bg-media">
+        <img class="bg-media__poster" src="assets/images/mood.jpeg" alt="" aria-hidden="true">
+        <video class="bg-media__video" muted loop playsinline preload="metadata" poster="assets/images/mood.jpeg" data-video="global">
+          <source src="assets/video/hydra_cream_02.mp4" type="video/mp4">
+        </video>
+        <div class="bg-media__overlay"></div>
+      </div>
+      <div class="container section__content">
+        <div class="grid-2">
+          <div class="reveal">
+            <p class="section__label">글로벌</p>
+            <h2 class="section__headline">
+              <span>서울에서 연구하고,</span>
+              <span>세계를 위해 만듭니다.</span>
+            </h2>
+            <p class="section__desc">
+              SOREN LAB은 OEM·ODM 및 자체 브랜드 유통을 통해 글로벌 뷰티 브랜드와 함께 세계 시장에 제품을 선보입니다.
+            </p>
+            <div class="global-stats">
+              <div class="global-stat">
+                <div class="global-stat__number" data-count="17">0</div>
+                <div class="global-stat__label">수출 국가</div>
+              </div>
+              <div class="global-stat">
+                <div class="global-stat__number" data-count="42">0</div>
+                <div class="global-stat__label">글로벌 파트너</div>
+              </div>
+            </div>
+          </div>
+          <div class="reveal reveal-delay-2">
+            <div class="media-wrap image-reveal" style="aspect-ratio: 16/10;">
+              <img src="assets/images/global_section.png" alt="SOREN LAB 글로벌 네트워크" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section section--ivory" id="contact">
+      <div class="container">
+        <div class="contact-grid">
+          <div class="reveal">
+            <p class="section__label">문의</p>
+            <h2 class="section__headline">
+              <span>함께</span>
+              <span>아름다움을</span>
+              <span>정교하게 완성하세요.</span>
+            </h2>
+            <p class="section__desc" style="margin-bottom: 2rem;">
+              SOREN LAB과 프로젝트를 시작하세요. 제품 개발, OEM·ODM 파트너십, 글로벌 협업 문의를 환영합니다.
+            </p>
+            <div class="contact-visual">
+              <img src="assets/images/hero.jpeg" alt="SOREN LAB 브랜드 비주얼" loading="lazy">
+            </div>
+          </div>
+          <div class="reveal reveal-delay-2">
+            <form class="form" id="contactForm" novalidate>
+              <div class="form__group">
+                <label class="form__label" for="company">회사명</label>
+                <input class="form__input" type="text" id="company" name="company" required>
+                <span class="form__error" data-error="company"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="name">담당자</label>
+                <input class="form__input" type="text" id="name" name="name" required>
+                <span class="form__error" data-error="name"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="email">이메일</label>
+                <input class="form__input" type="email" id="email" name="email" required>
+                <span class="form__error" data-error="email"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="inquiryType">문의 유형</label>
+                <select class="form__select" id="inquiryType" name="inquiryType" required>
+                  <option value="">유형 선택</option>
+                  <option value="product">제품</option>
+                  <option value="oem">OEM / ODM</option>
+                  <option value="partnership">파트너십</option>
+                  <option value="other">기타</option>
+                </select>
+                <span class="form__error" data-error="inquiryType"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__label" for="message">문의 내용</label>
+                <textarea class="form__textarea" id="message" name="message" required></textarea>
+                <span class="form__error" data-error="message"></span>
+              </div>
+              <div class="form__group">
+                <label class="form__checkbox">
+                  <input type="checkbox" id="privacy" name="privacy" required>
+                  <span>개인정보 수집 및 이용에 동의합니다.</span>
+                </label>
+                <span class="form__error" data-error="privacy"></span>
+              </div>
+              <button type="submit" class="btn btn--filled" id="submitBtn">문의 보내기</button>
+              <p class="form__submit-error" id="formSubmitError" hidden></p>
+            </form>
+            <div class="form__success" id="formSuccess">
+              <h3>감사합니다.</h3>
+              <p>문의가 접수되었습니다. 담당자가 확인 후 빠르게 연락드리겠습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 SOREN LAB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Product Modal -->
+  <div class="modal" id="productModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__dialog">
+      <button class="modal__close" data-close-modal aria-label="닫기">&times;</button>
+      <div class="modal__image">
+        <img id="modalImage" src="" alt="">
+      </div>
+      <div class="modal__body">
+        <p class="modal__code" id="modalCode"></p>
+        <h3 class="modal__title" id="modalTitle"></h3>
+        <p class="modal__type" id="modalType"></p>
+        <p class="modal__message" id="modalMessage"></p>
+        <p class="modal__desc" id="modalDesc"></p>
+        <p class="modal__ingredients-title" id="modalIngredientsTitle">주요 성분</p>
+        <ul class="modal__ingredients" id="modalIngredients"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/video.js"></script>
+  <script src="js/animate.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
