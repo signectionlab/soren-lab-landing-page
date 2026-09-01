@@ -3,3 +3,4 @@
 
 SHEET_NAME=your-sheet-tab-name
 ADMIN_EMAIL=your-email@example.com
+ADMIN_TOKEN=your-secure-admin-token

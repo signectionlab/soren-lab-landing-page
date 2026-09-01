@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>SOREN LAB — 문의 관리</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=Syne:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div id="loginScreen" class="admin-login">
+    <div class="admin-login__card">
+      <p class="admin-login__brand">SOREN LAB</p>
+      <h1 class="admin-login__title">문의 관리</h1>
+      <p class="admin-login__desc">관리자 토큰을 입력하세요.</p>
+      <form id="loginForm" class="admin-login__form">
+        <label class="admin-field">
+          <span class="admin-field__label">관리자 토큰</span>
+          <input type="password" id="tokenInput" autocomplete="current-password" required />
+        </label>
+        <p id="loginError" class="admin-error" role="alert" hidden></p>
+        <button type="submit" id="loginBtn" class="admin-btn admin-btn--primary">로그인</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminApp" class="admin-app" hidden>
+    <header class="admin-header">
+      <div class="admin-header__inner">
+        <div>
+          <p class="admin-header__brand">SOREN LAB</p>
+          <h1 class="admin-header__title">인바운드 문의 관리</h1>
+        </div>
+        <div class="admin-header__actions">
+          <button type="button" id="refreshBtn" class="admin-btn admin-btn--ghost">새로고침</button>
+          <button type="button" id="logoutBtn" class="admin-btn admin-btn--ghost">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div class="admin-toolbar">
+        <p id="inquiryCount" class="admin-toolbar__count">문의 0건</p>
+        <label class="admin-filter">
+          <span class="admin-filter__label">상태 필터</span>
+          <select id="statusFilter">
+            <option value="">전체</option>
+            <option value="NEW">신규</option>
+            <option value="CONTACTED">연락완료</option>
+            <option value="IN_PROGRESS">상담중</option>
+            <option value="PROPOSAL">제안발송</option>
+            <option value="COMPLETED">완료</option>
+            <option value="ON_HOLD">보류</option>
+            <option value="CLOSED">종료</option>
+          </select>
+        </label>
+      </div>
+
+      <p id="loadError" class="admin-error admin-error--block" hidden></p>
+      <div id="loadingState" class="admin-loading">불러오는 중...</div>
+
+      <div id="inquiryList" class="admin-table" hidden>
+        <div class="admin-table__header">
+          <span class="admin-table__col admin-table__col--name">문의자</span>
+          <span class="admin-table__col admin-table__col--date">문의 시각</span>
+        </div>
+        <div id="inquiryTableBody" class="admin-table__body"></div>
+      </div>
+      <p id="emptyState" class="admin-empty" hidden>등록된 문의가 없습니다.</p>
+    </main>
+  </div>
+
+  <div id="detailModal" class="admin-modal" hidden aria-hidden="true">
+    <div class="admin-modal__backdrop" data-close-modal></div>
+    <div class="admin-modal__panel" role="dialog" aria-labelledby="modalTitle">
+      <div class="admin-modal__header">
+        <h2 id="modalTitle" class="admin-modal__title">문의 상세</h2>
+        <button type="button" class="admin-modal__close" data-close-modal aria-label="닫기">&times;</button>
+      </div>
+      <div id="modalBody" class="admin-modal__body"></div>
+      <div class="admin-modal__footer">
+        <button type="button" id="deleteInquiryBtn" class="admin-btn admin-btn--danger">삭제</button>
+        <div class="admin-modal__footer-actions">
+          <button type="button" id="saveInquiryBtn" class="admin-btn admin-btn--primary">저장</button>
+          <button type="button" class="admin-btn admin-btn--ghost" data-close-modal>닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

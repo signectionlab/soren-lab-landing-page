@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "..");
+const placeholder = "__GOOGLE_SCRIPT_URL__";
 
 function loadEnvFile(filePath) {
   const env = {};
@@ -24,12 +25,21 @@ function loadEnvFile(filePath) {
   return env;
 }
 
-const env = Object.assign(
-  {},
-  loadEnvFile(path.join(root, ".env")),
-  process.env
-);
+function injectUrl(filePath, label) {
+  if (!fs.existsSync(filePath)) return;
 
+  let content = fs.readFileSync(filePath, "utf8");
+  if (!content.includes(placeholder)) {
+    console.warn(label + ": placeholder가 없어 건너뜁니다.");
+    return;
+  }
+
+  content = content.replaceAll(placeholder, googleScriptUrl);
+  fs.writeFileSync(filePath, content);
+  console.log(label + " 환경변수 주입 완료");
+}
+
+const env = Object.assign({}, loadEnvFile(path.join(root, ".env")), process.env);
 const googleScriptUrl = env.GOOGLE_SCRIPT_URL;
 
 if (!googleScriptUrl) {
@@ -37,15 +47,5 @@ if (!googleScriptUrl) {
   process.exit(1);
 }
 
-const formPath = path.join(root, "js", "form.js");
-const placeholder = "__GOOGLE_SCRIPT_URL__";
-let formJs = fs.readFileSync(formPath, "utf8");
-
-if (!formJs.includes(placeholder)) {
-  console.error("js/form.js 에 placeholder(__GOOGLE_SCRIPT_URL__)가 없습니다.");
-  process.exit(1);
-}
-
-formJs = formJs.replace(placeholder, googleScriptUrl);
-fs.writeFileSync(formPath, formJs);
-console.log("js/form.js 환경변수 주입 완료");
+injectUrl(path.join(root, "js", "form.js"), "js/form.js");
+injectUrl(path.join(root, "js", "admin.js"), "js/admin.js");
