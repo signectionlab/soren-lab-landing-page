@@ -29,13 +29,17 @@ function injectUrl(filePath, label) {
   if (!fs.existsSync(filePath)) return;
 
   let content = fs.readFileSync(filePath, "utf8");
-  if (!content.includes(placeholder)) {
-    console.warn(label + ": placeholder가 없어 건너뜁니다.");
+  const updated = content.replace(
+    /(const (?:API_URL|GOOGLE_SCRIPT_URL) = )"__GOOGLE_SCRIPT_URL__"/g,
+    '$1"' + googleScriptUrl + '"'
+  );
+
+  if (updated === content) {
+    console.warn(label + ": URL placeholder가 없어 건너뜁니다.");
     return;
   }
 
-  content = content.replaceAll(placeholder, googleScriptUrl);
-  fs.writeFileSync(filePath, content);
+  fs.writeFileSync(filePath, updated);
   console.log(label + " 환경변수 주입 완료");
 }
 

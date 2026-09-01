@@ -83,7 +83,7 @@
   }
 
   function buildUrl(params) {
-    if (!API_URL || API_URL.indexOf("__GOOGLE_SCRIPT_URL__") !== -1) {
+    if (!API_URL || API_URL.startsWith("__") || API_URL.indexOf("YOUR_DEPLOY_ID") !== -1) {
       throw new Error("API URL이 설정되지 않았습니다. node scripts/build-env.js 를 실행하세요.");
     }
     const url = new URL(API_URL);
