@@ -3,7 +3,10 @@
  *
  * node scripts/setup-admin-users.js
  *
- * 필요: .env 의 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+ * 필요 (.env):
+ *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+ *   ADMIN1_PASSWORD, ADMIN2_PASSWORD, ADMIN3_PASSWORD
+ *
  * 006_admin_roles.sql 실행 후 사용하세요.
  */
 
@@ -12,24 +15,24 @@ const path = require("path");
 
 const root = path.join(__dirname, "..");
 
-const ADMIN_ACCOUNTS = [
+const ADMIN_ACCOUNT_DEFS = [
   {
     email: "admin1@soren.com",
-    password: "admin1234",
+    passwordEnv: "ADMIN1_PASSWORD",
     displayName: "Admin1",
     role: "super",
     label: "전체 관리자",
   },
   {
     email: "admin2@soren.com",
-    password: "admin1234",
+    passwordEnv: "ADMIN2_PASSWORD",
     displayName: "Admin2",
     role: "inquiries",
     label: "문의 담당",
   },
   {
     email: "admin3@soren.com",
-    password: "admin1234",
+    passwordEnv: "ADMIN3_PASSWORD",
     displayName: "Admin3",
     role: "board",
     label: "게시판 담당",
@@ -51,6 +54,23 @@ function loadEnvFile(filePath) {
     });
 
   return env;
+}
+
+function buildAdminAccounts(env) {
+  return ADMIN_ACCOUNT_DEFS.map(function (def) {
+    const password = env[def.passwordEnv];
+    if (!password) {
+      throw new Error(def.passwordEnv + " 가 .env 에 필요합니다.");
+    }
+
+    return {
+      email: def.email,
+      password: password,
+      displayName: def.displayName,
+      role: def.role,
+      label: def.label,
+    };
+  });
 }
 
 async function adminFetch(baseUrl, serviceRoleKey, method, pathname, body) {
@@ -170,19 +190,24 @@ async function main() {
     process.exit(1);
   }
 
+  let adminAccounts;
+  try {
+    adminAccounts = buildAdminAccounts(env);
+  } catch (error) {
+    console.error(error.message || error);
+    process.exit(1);
+  }
+
   console.log("관리자 계정 설정 중...\n");
 
-  for (const account of ADMIN_ACCOUNTS) {
+  for (const account of adminAccounts) {
     const userId = await createOrUpdateUser(supabaseUrl, serviceRoleKey, account);
     await upsertProfile(supabaseUrl, serviceRoleKey, userId, account);
     console.log("✓ " + account.email + " → " + account.label + " (" + account.role + ")");
   }
 
-  console.log("\n완료. admin.html 로그인:");
-  ADMIN_ACCOUNTS.forEach(function (account) {
-    console.log("  " + account.email + " / admin1234");
-  });
-  console.log("\n보안: 배포 전 비밀번호 변경을 권장합니다.");
+  console.log("\n완료. admin.html 에서 각 관리자 이메일로 로그인하세요.");
+  console.log("비밀번호는 .env 에만 보관하며 Git/Vercel 에 올리지 마세요.");
 }
 
 main().catch(function (error) {
