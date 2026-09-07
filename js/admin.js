@@ -382,13 +382,44 @@
       '<select id="modalStatus">' +
       statusOptionsHtml +
       "</select></label>" +
-      '<label class="admin-field"><span class="admin-field__label">관리자 메모</span>' +
+      '<label class="admin-field admin-field--with-ai">' +
+      '<span class="admin-field__head">' +
+      '<span class="admin-field__label">관리자 메모</span>' +
+      '<button type="button" class="admin-ai-btn" id="inquiryAiBtn">AI</button>' +
+      "</span>" +
       '<textarea id="modalMemo" rows="4" placeholder="상담 메모를 입력하세요.">' +
       escapeHtml(item.memo) +
       "</textarea></label></div>";
 
     detailModal.hidden = false;
     detailModal.setAttribute("aria-hidden", "false");
+
+    bindInquiryAiButton(item);
+  }
+
+  function bindInquiryAiButton(item) {
+    const aiBtn = document.getElementById("inquiryAiBtn");
+    const memoEl = document.getElementById("modalMemo");
+    const statusEl = document.getElementById("modalStatus");
+
+    if (!aiBtn || !memoEl || !window.SorenAdminAI) return;
+
+    aiBtn.addEventListener("click", function () {
+      window.SorenAdminAI.runButton(aiBtn, memoEl, function () {
+        return {
+          type: "inquiry",
+          data: {
+            status: statusEl ? statusEl.value : item.status,
+            inquiryType: item.type,
+            company: item.company,
+            name: item.name,
+            email: item.email,
+            message: item.message,
+            existingMemo: memoEl.value.trim(),
+          },
+        };
+      });
+    });
   }
 
   function closeDetail() {

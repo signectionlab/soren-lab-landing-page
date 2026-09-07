@@ -160,11 +160,40 @@
       '<div class="admin-board-replies__list">' +
       renderRepliesHtml(activeReplies) +
       "</div>" +
-      '<label class="admin-field"><span class="admin-field__label">답글 작성</span>' +
+      '<label class="admin-field admin-field--with-ai">' +
+      '<span class="admin-field__head">' +
+      '<span class="admin-field__label">답글 작성</span>' +
+      '<button type="button" class="admin-ai-btn" id="boardAiBtn">AI</button>' +
+      "</span>" +
       '<textarea id="boardReplyInput" rows="4" placeholder="회원 게시글에 대한 답글을 입력하세요."></textarea></label></div>';
 
     boardModal.hidden = false;
     boardModal.setAttribute("aria-hidden", "false");
+
+    bindBoardAiButton(post);
+  }
+
+  function bindBoardAiButton(post) {
+    const aiBtn = document.getElementById("boardAiBtn");
+    const replyInput = document.getElementById("boardReplyInput");
+
+    if (!aiBtn || !replyInput || !window.SorenAdminAI) return;
+
+    aiBtn.addEventListener("click", function () {
+      window.SorenAdminAI.runButton(aiBtn, replyInput, function () {
+        return {
+          type: "board_reply",
+          data: {
+            title: post.title,
+            author: getAuthorLabel(post),
+            content: post.content,
+            existingReplies: activeReplies.map(function (reply) {
+              return reply.content || "";
+            }),
+          },
+        };
+      });
+    });
   }
 
   function closeBoardDetail() {
