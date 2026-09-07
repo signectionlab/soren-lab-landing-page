@@ -238,7 +238,7 @@ CREATE POLICY "admin_delete_board_replies"
   TO authenticated
   USING (public.can_manage_board() AND author_id = auth.uid());
 
--- admin1~3: @soren.com 관리자 전용 계정
+-- admin1~2: @soren.com 관리자 전용 계정 (admin3 제거됨)
 -- (계정 생성은 node scripts/setup-admin-users.js 실행)
 UPDATE public.profiles AS p
 SET admin_role = 'super',
@@ -254,6 +254,7 @@ FROM auth.users AS u
 WHERE p.id = u.id
   AND lower(u.email) = lower('admin2@soren.com');
 
+-- (이력) admin3@soren.com — 계정 삭제됨, 재실행하지 마세요
 UPDATE public.profiles AS p
 SET admin_role = 'board',
     is_admin = true

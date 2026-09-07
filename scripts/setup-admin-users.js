@@ -1,11 +1,11 @@
 /**
- * 관리자 전용 계정 3개 생성/갱신 (1회 실행)
+ * 관리자 전용 계정 2개 생성/갱신 (1회 실행)
  *
  * node scripts/setup-admin-users.js
  *
  * 필요 (.env):
  *   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
- *   ADMIN1_PASSWORD, ADMIN2_PASSWORD, ADMIN3_PASSWORD
+ *   ADMIN1_PASSWORD, ADMIN2_PASSWORD
  *
  * 006_admin_roles.sql 실행 후 사용하세요.
  */
@@ -29,13 +29,6 @@ const ADMIN_ACCOUNT_DEFS = [
     displayName: "Admin2",
     role: "inquiries",
     label: "문의 담당",
-  },
-  {
-    email: "admin3@soren.com",
-    passwordEnv: "ADMIN3_PASSWORD",
-    displayName: "Admin3",
-    role: "board",
-    label: "게시판 담당",
   },
 ];
 
