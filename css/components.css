@@ -566,6 +566,30 @@
   margin-bottom: 0.75rem;
 }
 
+.form__member-notice {
+  padding: 2rem;
+  text-align: center;
+  background: var(--color-ivory);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10, 10, 10, 0.06);
+}
+
+.form__member-notice h3 {
+  font-size: 1.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.form__member-notice p {
+  margin: 0 0 1.25rem;
+  color: var(--color-gray-600);
+  line-height: 1.65;
+}
+
+.form[hidden],
+.form__member-notice[hidden] {
+  display: none !important;
+}
+
 /* Modal */
 .modal {
   position: fixed;
