@@ -15,12 +15,16 @@
   <div id="loginScreen" class="admin-login">
     <div class="admin-login__card">
       <p class="admin-login__brand">SOREN LAB</p>
-      <h1 class="admin-login__title">문의 관리</h1>
-      <p class="admin-login__desc">관리자 토큰을 입력하세요.</p>
+      <h1 class="admin-login__title">관리자 로그인</h1>
+      <p class="admin-login__desc">관리자 계정만 접속할 수 있습니다.</p>
       <form id="loginForm" class="admin-login__form">
         <label class="admin-field">
-          <span class="admin-field__label">관리자 토큰</span>
-          <input type="password" id="tokenInput" autocomplete="current-password" required />
+          <span class="admin-field__label">이메일</span>
+          <input type="email" id="emailInput" autocomplete="username" required />
+        </label>
+        <label class="admin-field">
+          <span class="admin-field__label">비밀번호</span>
+          <input type="password" id="passwordInput" autocomplete="current-password" required />
         </label>
         <p id="loginError" class="admin-error" role="alert" hidden></p>
         <button type="submit" id="loginBtn" class="admin-btn admin-btn--primary">로그인</button>
@@ -33,7 +37,8 @@
       <div class="admin-header__inner">
         <div>
           <p class="admin-header__brand">SOREN LAB</p>
-          <h1 class="admin-header__title">인바운드 문의 관리</h1>
+          <h1 class="admin-header__title">관리자</h1>
+          <p id="adminRoleLabel" class="admin-header__role" hidden></p>
         </div>
         <div class="admin-header__actions">
           <button type="button" id="refreshBtn" class="admin-btn admin-btn--ghost">새로고침</button>
@@ -43,6 +48,13 @@
     </header>
 
     <main class="admin-main">
+      <nav class="admin-tabs" aria-label="관리 메뉴">
+        <button type="button" class="admin-tab is-active" data-admin-tab="inquiries" hidden>문의 관리</button>
+        <button type="button" class="admin-tab" data-admin-tab="board" hidden>게시판 관리</button>
+        <button type="button" class="admin-tab" data-admin-tab="admins" hidden>관리자 계정</button>
+      </nav>
+
+      <section id="inquiriesPanel" class="admin-panel">
       <div class="admin-toolbar">
         <p id="inquiryCount" class="admin-toolbar__count">문의 0건</p>
         <label class="admin-filter">
@@ -71,6 +83,56 @@
         <div id="inquiryTableBody" class="admin-table__body"></div>
       </div>
       <p id="emptyState" class="admin-empty" hidden>등록된 문의가 없습니다.</p>
+      </section>
+
+      <section id="boardPanel" class="admin-panel" hidden>
+        <div class="admin-toolbar">
+          <p id="boardCount" class="admin-toolbar__count">게시글 0건</p>
+        </div>
+
+        <p id="boardLoadError" class="admin-error admin-error--block" hidden></p>
+        <div id="boardLoadingState" class="admin-loading">불러오는 중...</div>
+
+        <div id="boardList" class="admin-table admin-table--board" hidden>
+          <div class="admin-table__header">
+            <span class="admin-table__col admin-table__col--title">제목</span>
+            <span class="admin-table__col admin-table__col--author">작성자</span>
+            <span class="admin-table__col admin-table__col--date">작성일</span>
+          </div>
+          <div id="boardTableBody" class="admin-table__body"></div>
+        </div>
+        <p id="boardEmptyState" class="admin-empty" hidden>등록된 게시글이 없습니다.</p>
+      </section>
+
+      <section id="adminsPanel" class="admin-panel" hidden>
+        <div class="admin-toolbar">
+          <p class="admin-toolbar__count">관리자 계정 관리</p>
+        </div>
+        <p class="admin-panel__desc">전체 관리자(super)만 다른 관리자의 권한을 변경할 수 있습니다.</p>
+
+        <form id="adminAssignForm" class="admin-assign">
+          <label class="admin-field">
+            <span class="admin-field__label">이메일</span>
+            <input type="email" id="adminAssignEmail" placeholder="admin2@example.com" required />
+          </label>
+          <label class="admin-field">
+            <span class="admin-field__label">권한</span>
+            <select id="adminAssignRole" required>
+              <option value="">선택</option>
+              <option value="super">전체 관리자 (admin1)</option>
+              <option value="inquiries">문의 담당 (admin2)</option>
+              <option value="board">게시판 담당 (admin3)</option>
+            </select>
+          </label>
+          <button type="submit" class="admin-btn admin-btn--primary">권한 부여</button>
+        </form>
+        <p id="adminAssignMessage" class="admin-message" hidden></p>
+
+        <p id="adminStaffError" class="admin-error admin-error--block" hidden></p>
+        <div id="adminStaffLoading" class="admin-loading">불러오는 중...</div>
+        <div id="adminStaffList" class="admin-staff-list"></div>
+        <p id="adminStaffEmpty" class="admin-empty" hidden>등록된 관리자가 없습니다.</p>
+      </section>
     </main>
   </div>
 
@@ -92,6 +154,30 @@
     </div>
   </div>
 
+  <div id="boardModal" class="admin-modal" hidden aria-hidden="true">
+    <div class="admin-modal__backdrop" data-close-board-modal></div>
+    <div class="admin-modal__panel" role="dialog" aria-labelledby="boardModalTitle">
+      <div class="admin-modal__header">
+        <h2 id="boardModalTitle" class="admin-modal__title">게시글 상세</h2>
+        <button type="button" class="admin-modal__close" data-close-board-modal aria-label="닫기">&times;</button>
+      </div>
+      <div id="boardModalBody" class="admin-modal__body"></div>
+      <div class="admin-modal__footer">
+        <button type="button" id="deletePostBtn" class="admin-btn admin-btn--danger">게시글 삭제</button>
+        <div class="admin-modal__footer-actions">
+          <button type="button" id="saveReplyBtn" class="admin-btn admin-btn--primary">답글 등록</button>
+          <button type="button" class="admin-btn admin-btn--ghost" data-close-board-modal>닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/admin-auth.js"></script>
   <script src="js/admin.js"></script>
+  <script src="js/admin-board.js"></script>
+  <script src="js/admin-staff.js"></script>
 </body>
 </html>

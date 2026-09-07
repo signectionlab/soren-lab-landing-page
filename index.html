@@ -32,6 +32,8 @@
           <li><a href="#product" class="nav__link" data-section="product">제품</a></li>
           <li><a href="#capabilities" class="nav__link" data-section="capabilities">역량</a></li>
           <li><a href="#contact" class="nav__link" data-section="contact">문의</a></li>
+          <li><a href="auth.html?next=board.html" class="nav__link" data-board-link>게시판</a></li>
+          <li><a href="auth.html" class="nav__link nav__link--button" data-auth-link>로그인</a></li>
         </ul>
         <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false">
           <span></span>
@@ -48,6 +50,8 @@
     <a href="#product" class="nav__link" data-section="product">제품</a>
     <a href="#capabilities" class="nav__link" data-section="capabilities">역량</a>
     <a href="#contact" class="nav__link" data-section="contact">문의</a>
+    <a href="auth.html?next=board.html" class="nav__link" data-board-link>게시판</a>
+    <a href="auth.html" class="nav__link" data-auth-link>로그인</a>
   </nav>
 
   <main>
@@ -385,6 +389,10 @@
 
   <script src="js/video.js"></script>
   <script src="js/animate.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/session-nav.js"></script>
   <script src="js/form.js"></script>
   <script src="js/main.js"></script>
 </body>

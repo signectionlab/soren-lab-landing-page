@@ -76,6 +76,16 @@
   width: 100%;
 }
 
+.nav__link--button {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+}
+
+.nav__link--button::after {
+  display: none;
+}
+
 .nav__toggle {
   display: none;
   flex-direction: column;

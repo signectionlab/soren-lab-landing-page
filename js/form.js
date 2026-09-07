@@ -1,12 +1,15 @@
 (function () {
-  const GOOGLE_SCRIPT_URL = "__GOOGLE_SCRIPT_URL__";
-
   const form = document.getElementById("contactForm");
   const successEl = document.getElementById("formSuccess");
   const submitBtn = document.getElementById("submitBtn");
   const submitErrorEl = document.getElementById("formSubmitError");
 
   if (!form) return;
+
+  const supabase = window.SorenSupabase;
+  if (!supabase) {
+    throw new Error("Supabase 클라이언트를 불러오지 못했습니다.");
+  }
 
   const fields = {
     company: { required: true, message: "회사명을 입력해 주세요." },
@@ -96,46 +99,6 @@
     successEl.classList.add("is-visible");
   }
 
-  function getSubmitUrl() {
-    const params = new URLSearchParams({
-      company: form.company.value.trim(),
-      name: form.name.value.trim(),
-      email: form.email.value.trim(),
-      inquiryType: form.inquiryType.value,
-      message: form.message.value.trim(),
-      privacy: form.privacy.checked ? "true" : "false",
-    });
-
-    return GOOGLE_SCRIPT_URL + "?" + params.toString();
-  }
-
-  function submitViaHiddenFrame(url) {
-    return new Promise(function (resolve) {
-      let iframe = document.getElementById("gasSubmitFrame");
-
-      if (!iframe) {
-        iframe = document.createElement("iframe");
-        iframe.id = "gasSubmitFrame";
-        iframe.name = "gasSubmitFrame";
-        iframe.title = "문의 전송";
-        iframe.style.cssText = "display:none;width:0;height:0;border:0";
-        document.body.appendChild(iframe);
-      }
-
-      var done = false;
-      function finish() {
-        if (done) return;
-        done = true;
-        resolve();
-      }
-
-      iframe.onload = finish;
-      iframe.onerror = finish;
-      iframe.src = url;
-      setTimeout(finish, 2500);
-    });
-  }
-
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
     if (!validate()) return;
@@ -143,7 +106,21 @@
     setLoading(true);
 
     try {
-      await submitViaHiddenFrame(getSubmitUrl());
+      const { error } = await supabase.from("inquiries").insert({
+        inquiry_type: form.inquiryType.value,
+        company: form.company.value.trim(),
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        message: form.message.value.trim(),
+        privacy_agreed: form.privacy.checked,
+        source: "landing_page",
+        status: "NEW",
+      });
+
+      if (error) {
+        throw error;
+      }
+
       showSuccess();
     } catch (error) {
       setSubmitError("문의 전송에 실패했습니다. 잠시 후 다시 시도해 주세요.");

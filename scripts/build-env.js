@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "..");
-const placeholder = "__GOOGLE_SCRIPT_URL__";
 
 function loadEnvFile(filePath) {
   const env = {};
@@ -25,31 +24,32 @@ function loadEnvFile(filePath) {
   return env;
 }
 
-function injectUrl(filePath, label) {
-  if (!fs.existsSync(filePath)) return;
+function escapeJsString(value) {
+  return String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
 
-  let content = fs.readFileSync(filePath, "utf8");
-  const updated = content.replace(
-    /(const (?:API_URL|GOOGLE_SCRIPT_URL) = )"__GOOGLE_SCRIPT_URL__"/g,
-    '$1"' + googleScriptUrl + '"'
-  );
+function writeSupabaseConfig(filePath) {
+  const content =
+    "(function () {\n" +
+    '  window.SUPABASE_URL = "' +
+    escapeJsString(supabaseUrl) +
+    '";\n' +
+    '  window.SUPABASE_ANON_KEY = "' +
+    escapeJsString(supabaseAnonKey) +
+    '";\n' +
+    "})();\n";
 
-  if (updated === content) {
-    console.warn(label + ": URL placeholder가 없어 건너뜁니다.");
-    return;
-  }
-
-  fs.writeFileSync(filePath, updated);
-  console.log(label + " 환경변수 주입 완료");
+  fs.writeFileSync(filePath, content);
+  console.log(path.relative(root, filePath) + " 생성 완료");
 }
 
 const env = Object.assign({}, loadEnvFile(path.join(root, ".env")), process.env);
-const googleScriptUrl = env.GOOGLE_SCRIPT_URL;
+const supabaseUrl = env.SUPABASE_URL;
+const supabaseAnonKey = env.SUPABASE_ANON_KEY;
 
-if (!googleScriptUrl) {
-  console.error("GOOGLE_SCRIPT_URL 환경변수가 설정되지 않았습니다.");
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("SUPABASE_URL, SUPABASE_ANON_KEY 환경변수가 설정되지 않았습니다.");
   process.exit(1);
 }
 
-injectUrl(path.join(root, "js", "form.js"), "js/form.js");
-injectUrl(path.join(root, "js", "admin.js"), "js/admin.js");
+writeSupabaseConfig(path.join(root, "js", "supabase-config.js"));

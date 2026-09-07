@@ -1,8 +1,11 @@
 .DS_Store
 .env
 .env.*
-!.env.example
 *.log
 .cursor/
 .vercel
 .env*
+!.env.example
+data/*.csv
+js/supabase-config.js
+!js/supabase-config.example.js

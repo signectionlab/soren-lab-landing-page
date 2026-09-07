@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>SOREN LAB — 로그인</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Syne:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/auth-board.css" />
+</head>
+<body class="auth-page">
+  <div class="app-shell">
+    <header class="header header--dark header--scrolled" id="header">
+      <div class="header__inner">
+        <a href="index.html" class="header__logo">SOREN LAB</a>
+        <nav class="nav" aria-label="주요 메뉴">
+          <ul class="nav__list">
+            <li><a href="index.html#about" class="nav__link">소개</a></li>
+            <li><a href="index.html#technology" class="nav__link">기술</a></li>
+            <li><a href="index.html#product" class="nav__link">제품</a></li>
+            <li><a href="index.html#capabilities" class="nav__link">역량</a></li>
+            <li><a href="index.html#contact" class="nav__link">문의</a></li>
+            <li><a href="auth.html?next=board.html" class="nav__link" data-board-link>게시판</a></li>
+            <li><a href="auth.html" class="nav__link nav__link--button" data-auth-link>로그인</a></li>
+          </ul>
+          <button class="nav__toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <nav class="nav__overlay" id="navOverlay" aria-hidden="true">
+      <a href="index.html#about" class="nav__link">소개</a>
+      <a href="index.html#technology" class="nav__link">기술</a>
+      <a href="index.html#product" class="nav__link">제품</a>
+      <a href="index.html#capabilities" class="nav__link">역량</a>
+      <a href="index.html#contact" class="nav__link">문의</a>
+      <a href="auth.html?next=board.html" class="nav__link" data-board-link>게시판</a>
+      <a href="auth.html" class="nav__link" data-auth-link>로그인</a>
+    </nav>
+
+    <main class="auth-layout">
+      <section class="auth-card" aria-labelledby="authTitle">
+        <p class="eyebrow">Member</p>
+        <h1 class="page-title" id="authTitle">로그인</h1>
+        <p class="page-desc">게시판은 로그인한 회원만 이용할 수 있습니다.</p>
+
+        <div class="auth-tabs" role="tablist" aria-label="로그인 또는 회원가입">
+          <button type="button" class="auth-tab is-active" id="loginTab" data-auth-mode="login">로그인</button>
+          <button type="button" class="auth-tab" id="signupTab" data-auth-mode="signup">회원가입</button>
+        </div>
+
+        <form id="loginForm" class="form-stack">
+          <label class="field">
+            <span class="field__label">이메일</span>
+            <input class="input" type="email" name="email" autocomplete="username" required />
+          </label>
+          <label class="field">
+            <span class="field__label">비밀번호</span>
+            <input class="input" type="password" name="password" autocomplete="current-password" required />
+          </label>
+          <p id="loginMessage" class="message" role="alert" hidden></p>
+          <button type="submit" class="button">로그인</button>
+        </form>
+
+        <form id="signupForm" class="form-stack" hidden>
+          <label class="field">
+            <span class="field__label">이름 또는 닉네임</span>
+            <input class="input" type="text" name="displayName" autocomplete="name" required />
+          </label>
+          <label class="field">
+            <span class="field__label">이메일</span>
+            <input class="input" type="email" name="email" autocomplete="username" required />
+          </label>
+          <label class="field">
+            <span class="field__label">비밀번호</span>
+            <input class="input" type="password" name="password" autocomplete="new-password" minlength="6" required />
+          </label>
+          <p id="signupMessage" class="message" role="alert" hidden></p>
+          <button type="submit" class="button">회원가입</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/session-nav.js"></script>
+  <script src="js/static-nav.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

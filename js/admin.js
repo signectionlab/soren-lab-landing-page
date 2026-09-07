@@ -1,6 +1,4 @@
 (function () {
-  const API_URL = "__GOOGLE_SCRIPT_URL__";
-  const TOKEN_KEY = "soren_admin_token";
   const STATUS_OPTIONS = [
     { value: "NEW", label: "신규" },
     { value: "CONTACTED", label: "연락완료" },
@@ -14,7 +12,8 @@
   const loginScreen = document.getElementById("loginScreen");
   const adminApp = document.getElementById("adminApp");
   const loginForm = document.getElementById("loginForm");
-  const tokenInput = document.getElementById("tokenInput");
+  const emailInput = document.getElementById("emailInput");
+  const passwordInput = document.getElementById("passwordInput");
   const loginError = document.getElementById("loginError");
   const logoutBtn = document.getElementById("logoutBtn");
   const refreshBtn = document.getElementById("refreshBtn");
@@ -32,23 +31,107 @@
   const deleteInquiryBtn = document.getElementById("deleteInquiryBtn");
   const loginBtn = document.getElementById("loginBtn");
 
-  if (!loginForm || !tokenInput || !loginBtn) {
+  if (!loginForm || !emailInput || !passwordInput || !loginBtn) {
     throw new Error("관리자 페이지 요소를 불러오지 못했습니다.");
+  }
+
+  const supabase = window.SorenSupabase;
+  if (!supabase) {
+    throw new Error("Supabase 클라이언트를 불러오지 못했습니다.");
   }
 
   let inquiries = [];
   let activeInquiry = null;
+  let activeAdminTab = "inquiries";
 
-  function getToken() {
-    return sessionStorage.getItem(TOKEN_KEY) || "";
+  const inquiriesPanel = document.getElementById("inquiriesPanel");
+  const boardPanel = document.getElementById("boardPanel");
+  const adminsPanel = document.getElementById("adminsPanel");
+  const adminTabs = document.querySelectorAll("[data-admin-tab]");
+  const adminRoleLabel = document.getElementById("adminRoleLabel");
+  let currentAccess = null;
+
+  function getDefaultTab(access) {
+    if (access.canInquiries) return "inquiries";
+    if (access.canBoard) return "board";
+    if (access.canAdmins) return "admins";
+    return "inquiries";
   }
 
-  function setToken(token) {
-    sessionStorage.setItem(TOKEN_KEY, token);
+  function applyAccessUI(access) {
+    currentAccess = access;
+
+    if (adminRoleLabel) {
+      adminRoleLabel.hidden = !access.ok;
+      adminRoleLabel.textContent = access.label || "";
+    }
+
+    adminTabs.forEach(function (tab) {
+      const tabName = tab.dataset.adminTab;
+      let visible = false;
+      if (tabName === "inquiries") visible = access.canInquiries;
+      if (tabName === "board") visible = access.canBoard;
+      if (tabName === "admins") visible = access.canAdmins;
+      tab.hidden = !visible;
+    });
   }
 
-  function clearToken() {
-    sessionStorage.removeItem(TOKEN_KEY);
+  async function enterAdminApp() {
+    const access =
+      window.SorenAdminAuth && (await window.SorenAdminAuth.loadAccess(true));
+    if (!access || !access.ok) {
+      showLogin();
+      setLoginError("관리자 계정만 접속할 수 있습니다.");
+      return false;
+    }
+
+    applyAccessUI(access);
+    showApp();
+    setActiveTab(getDefaultTab(access));
+    await refreshActivePanel();
+    return true;
+  }
+
+  function setActiveTab(tabName) {
+    if (!currentAccess) return;
+
+    if (tabName === "inquiries" && !currentAccess.canInquiries) return;
+    if (tabName === "board" && !currentAccess.canBoard) return;
+    if (tabName === "admins" && !currentAccess.canAdmins) return;
+
+    activeAdminTab = tabName;
+
+    adminTabs.forEach(function (tab) {
+      tab.classList.toggle("is-active", tab.dataset.adminTab === tabName);
+    });
+
+    if (inquiriesPanel) {
+      inquiriesPanel.hidden = tabName !== "inquiries";
+    }
+    if (boardPanel) {
+      boardPanel.hidden = tabName !== "board";
+    }
+    if (adminsPanel) {
+      adminsPanel.hidden = tabName !== "admins";
+    }
+  }
+
+  async function refreshActivePanel() {
+    if (activeAdminTab === "board") {
+      if (window.SorenAdminBoard) {
+        await window.SorenAdminBoard.loadBoardPosts();
+      }
+      return;
+    }
+
+    if (activeAdminTab === "admins") {
+      if (window.SorenAdminStaff) {
+        await window.SorenAdminStaff.loadAdminStaff();
+      }
+      return;
+    }
+
+    await loadInquiries();
   }
 
   function showLogin() {
@@ -82,100 +165,6 @@
     loadError.textContent = message;
   }
 
-  function buildUrl(params) {
-    if (!API_URL || API_URL.startsWith("__") || API_URL.indexOf("YOUR_DEPLOY_ID") !== -1) {
-      throw new Error("API URL이 설정되지 않았습니다. node scripts/build-env.js 를 실행하세요.");
-    }
-    const url = new URL(API_URL);
-    Object.keys(params).forEach(function (key) {
-      if (params[key] !== undefined && params[key] !== null) {
-        url.searchParams.set(key, String(params[key]));
-      }
-    });
-    return url.toString();
-  }
-
-  function jsonpRequest(params) {
-    return new Promise(function (resolve, reject) {
-      const callbackName =
-        "sorenAdminCb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
-      const url = buildUrl(Object.assign({}, params, { callback: callbackName }));
-      const script = document.createElement("script");
-      let timeoutId;
-
-      function cleanup() {
-        clearTimeout(timeoutId);
-        delete window[callbackName];
-        if (script.parentNode) {
-          script.parentNode.removeChild(script);
-        }
-      }
-
-      window[callbackName] = function (data) {
-        cleanup();
-        resolve(data);
-      };
-
-      script.onerror = function () {
-        cleanup();
-        reject(new Error("서버에 연결할 수 없습니다. 네트워크를 확인하세요."));
-      };
-
-      timeoutId = setTimeout(function () {
-        cleanup();
-        reject(new Error("요청 시간이 초과되었습니다. 잠시 후 다시 시도하세요."));
-      }, 20000);
-
-      script.src = url;
-      document.head.appendChild(script);
-    });
-  }
-
-  async function apiPostRequest(params) {
-    const body = new URLSearchParams();
-    Object.keys(params).forEach(function (key) {
-      if (params[key] !== undefined && params[key] !== null) {
-        body.set(key, String(params[key]));
-      }
-    });
-
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
-        redirect: "follow",
-      });
-      const text = await response.text();
-
-      try {
-        return JSON.parse(text);
-      } catch (error) {
-        throw new Error("서버 응답을 읽을 수 없습니다.");
-      }
-    } catch (fetchError) {
-      return jsonpRequest(params);
-    }
-  }
-
-  async function apiRequest(params) {
-    try {
-      const response = await fetch(buildUrl(params), {
-        method: "GET",
-        redirect: "follow",
-      });
-      const text = await response.text();
-
-      try {
-        return JSON.parse(text);
-      } catch (error) {
-        throw new Error("서버 응답을 읽을 수 없습니다.");
-      }
-    } catch (fetchError) {
-      return jsonpRequest(params);
-    }
-  }
-
   function getStatusLabel(status) {
     const found = STATUS_OPTIONS.find(function (item) {
       return item.value === status;
@@ -189,6 +178,37 @@
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+  }
+
+  function formatDate(value) {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mm = String(date.getMinutes()).padStart(2, "0");
+    return y + "-" + m + "-" + d + " " + hh + ":" + mm;
+  }
+
+  function mapInquiry(row) {
+    return {
+      id: row.id,
+      legacySheetId: row.legacy_sheet_id,
+      date: formatDate(row.created_at),
+      createdAt: row.created_at,
+      type: row.inquiry_type || "",
+      company: row.company || "",
+      name: row.name || "",
+      email: row.email || "",
+      message: row.message || "",
+      privacy: row.privacy_agreed ? "TRUE" : "FALSE",
+      memo: row.memo || "",
+      source: row.source || "",
+      status: row.status || "NEW",
+      statusLabel: getStatusLabel(row.status),
+    };
   }
 
   function getInquirerLabel(item) {
@@ -226,7 +246,7 @@
     const row = document.createElement("button");
     row.type = "button";
     row.className = "admin-table__row";
-    row.dataset.row = String(item.row);
+    row.dataset.id = String(item.id);
 
     const inquirerCell = document.createElement("span");
     inquirerCell.className = "admin-table__col admin-table__col--inquirer";
@@ -257,65 +277,51 @@
     return row;
   }
 
-  async function deleteInquiry(row) {
-    const rowNum = Number(row);
-    if (!rowNum || rowNum < 2) {
-      throw new Error("유효하지 않은 문의입니다.");
-    }
+  async function deleteInquiry(id) {
+    const { error } = await supabase.from("inquiries").delete().eq("id", id);
 
-    const result = await apiPostRequest({
-      action: "delete",
-      token: getToken(),
-      row: rowNum,
-    });
-
-    if (!result || !result.success) {
-      const message = (result && result.error) || "삭제에 실패했습니다.";
-      if (message.indexOf("action") !== -1) {
-        throw new Error(
-          "삭제 API가 아직 배포되지 않았습니다. Apps Script Code.gs 저장 후 새 배포를 진행해 주세요."
-        );
-      }
-      throw new Error(message);
+    if (error) {
+      throw new Error(error.message || "삭제에 실패했습니다.");
     }
 
     closeDetail();
     await loadInquiries();
   }
 
-  async function updateInquiry(row, updates) {
+  async function updateInquiry(id, updates) {
     const item = inquiries.find(function (entry) {
-      return entry.row === row;
+      return entry.id === id;
     });
     if (!item) {
       throw new Error("해당 문의를 찾을 수 없습니다.");
     }
 
-    const status =
-      updates.status !== undefined ? updates.status : item.status || "NEW";
-    const memo = updates.memo !== undefined ? updates.memo : item.memo || "";
+    const payload = {
+      status: updates.status !== undefined ? updates.status : item.status || "NEW",
+      memo: updates.memo !== undefined ? updates.memo : item.memo || "",
+    };
 
-    const result = await apiRequest({
-      action: "update",
-      token: getToken(),
-      row: row,
-      status: status,
-      memo: memo,
-    });
+    const { data, error } = await supabase
+      .from("inquiries")
+      .update(payload)
+      .eq("id", id)
+      .select("*")
+      .single();
 
-    if (!result.success) {
-      throw new Error(result.error || "저장에 실패했습니다.");
+    if (error) {
+      throw new Error(error.message || "저장에 실패했습니다.");
     }
 
+    const mapped = mapInquiry(data);
     const index = inquiries.findIndex(function (entry) {
-      return entry.row === row;
+      return entry.id === id;
     });
     if (index !== -1) {
-      inquiries[index] = result.inquiry;
+      inquiries[index] = mapped;
     }
 
     renderList();
-    return result.inquiry;
+    return mapped;
   }
 
   function openDetail(item) {
@@ -335,6 +341,12 @@
       );
     }).join("");
 
+    const legacyHtml = item.legacySheetId
+      ? '<div class="admin-detail-item"><span class="admin-detail-item__label">시트 번호</span><div class="admin-detail-item__value">' +
+        escapeHtml(item.legacySheetId) +
+        "</div></div>"
+      : "";
+
     modalBody.innerHTML =
       '<div class="admin-detail-status">' +
       '<span class="admin-badge admin-badge--' +
@@ -343,6 +355,7 @@
       escapeHtml(item.statusLabel || getStatusLabel(item.status)) +
       "</span></div>" +
       '<div class="admin-detail-grid">' +
+      legacyHtml +
       '<div class="admin-detail-item"><span class="admin-detail-item__label">접수일시</span><div class="admin-detail-item__value">' +
       escapeHtml(item.date) +
       "</div></div>" +
@@ -391,22 +404,26 @@
     emptyState.hidden = true;
 
     try {
-      const result = await apiRequest({
-        action: "list",
-        token: getToken(),
-      });
+      const { data, error } = await supabase
+        .from("inquiries")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-      if (!result.success) {
-        throw new Error(result.error || "목록을 불러오지 못했습니다.");
+      if (error) {
+        throw new Error(error.message || "목록을 불러오지 못했습니다.");
       }
 
-      inquiries = result.inquiries || [];
+      inquiries = (data || []).map(mapInquiry);
       renderList();
     } catch (error) {
-      if (String(error.message).indexOf("인증") !== -1) {
-        clearToken();
+      if (
+        String(error.message).indexOf("JWT") !== -1 ||
+        String(error.message).indexOf("session") !== -1 ||
+        String(error.message).indexOf("인증") !== -1
+      ) {
+        await supabase.auth.signOut();
         showLogin();
-        setLoginError(error.message);
+        setLoginError("로그인이 만료되었습니다. 다시 로그인하세요.");
       } else {
         setLoadError(error.message);
       }
@@ -430,7 +447,7 @@
     }
 
     try {
-      await deleteInquiry(activeInquiry.row);
+      await deleteInquiry(activeInquiry.id);
     } catch (error) {
       alert(error.message);
     } finally {
@@ -452,7 +469,7 @@
     saveInquiryBtn.textContent = "저장 중...";
 
     try {
-      await updateInquiry(activeInquiry.row, {
+      await updateInquiry(activeInquiry.id, {
         status: statusEl.value,
         memo: memoEl.value,
       });
@@ -468,26 +485,32 @@
   loginForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     setLoginError("");
-    const token = tokenInput.value.trim();
-    if (!token) return;
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    if (!email || !password) return;
 
     loginBtn.disabled = true;
     loginBtn.textContent = "로그인 중...";
 
-    setToken(token);
-
     try {
-      const result = await apiRequest({ action: "list", token: token });
-      if (!result || !result.success) {
-        throw new Error((result && result.error) || "로그인에 실패했습니다.");
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+      if (error) {
+        throw new Error(error.message || "로그인에 실패했습니다.");
       }
-      showApp();
-      inquiries = result.inquiries || [];
-      renderList();
-      loadingState.hidden = true;
-      setLoginError("");
+
+      const entered = await enterAdminApp();
+      if (!entered) {
+        emailInput.value = "";
+        passwordInput.value = "";
+      } else {
+        setLoginError("");
+      }
     } catch (error) {
-      clearToken();
       showLogin();
       setLoginError(error.message || "로그인에 실패했습니다.");
     } finally {
@@ -496,14 +519,27 @@
     }
   });
 
-  logoutBtn.addEventListener("click", function () {
-    clearToken();
-    tokenInput.value = "";
+  logoutBtn.addEventListener("click", async function () {
+    if (window.SorenAdminAuth) {
+      window.SorenAdminAuth.clearAccessCache();
+    }
+    await supabase.auth.signOut();
+    emailInput.value = "";
+    passwordInput.value = "";
     showLogin();
   });
 
-  refreshBtn.addEventListener("click", loadInquiries);
+  refreshBtn.addEventListener("click", refreshActivePanel);
   statusFilter.addEventListener("change", renderList);
+
+  adminTabs.forEach(function (tab) {
+    tab.addEventListener("click", async function () {
+      const tabName = tab.dataset.adminTab;
+      if (!tabName || tab.hidden || tabName === activeAdminTab) return;
+      setActiveTab(tabName);
+      await refreshActivePanel();
+    });
+  });
   saveInquiryBtn.addEventListener("click", saveInquiry);
   if (deleteInquiryBtn) {
     deleteInquiryBtn.addEventListener("click", deleteInquiryFromModal);
@@ -513,10 +549,31 @@
     el.addEventListener("click", closeDetail);
   });
 
-  if (getToken()) {
-    showApp();
-    loadInquiries();
-  } else {
-    showLogin();
-  }
+  supabase.auth.getSession().then(async function (result) {
+    if (result.data.session) {
+      await enterAdminApp();
+    } else {
+      showLogin();
+    }
+  });
+
+  supabase.auth.onAuthStateChange(async function (_event, session) {
+    if (!session) {
+      if (window.SorenAdminAuth) {
+        window.SorenAdminAuth.clearAccessCache();
+      }
+      showLogin();
+      return;
+    }
+
+    const access =
+      window.SorenAdminAuth && (await window.SorenAdminAuth.loadAccess(true));
+    if (!access || !access.ok) {
+      showLogin();
+      setLoginError("관리자 계정만 접속할 수 있습니다.");
+      return;
+    }
+
+    applyAccessUI(access);
+  });
 })();

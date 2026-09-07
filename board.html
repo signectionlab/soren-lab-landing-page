@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>SOREN LAB — 게시판</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/board.css" />
+</head>
+<body class="board-page">
+  <header class="board-header">
+    <div class="board-header__inner">
+      <a href="index.html" class="board-header__logo">SOREN LAB</a>
+      <nav class="board-header__nav" aria-label="주요 메뉴">
+        <a href="index.html#about">소개</a>
+        <a href="index.html#technology">기술</a>
+        <a href="index.html#product">제품</a>
+        <a href="index.html#capabilities">역량</a>
+        <a href="index.html#contact">문의</a>
+        <a href="board.html" class="is-active" data-board-link>게시판</a>
+      </nav>
+      <div class="board-header__account">
+        <span class="board-header__email" data-user-email hidden></span>
+        <a href="auth.html" data-auth-link>로그인</a>
+      </div>
+      <button class="board-header__toggle" id="boardNavToggle" type="button" aria-label="메뉴 열기" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="board-header__overlay" id="boardNavOverlay" aria-hidden="true">
+    <a href="index.html#about">소개</a>
+    <a href="index.html#technology">기술</a>
+    <a href="index.html#product">제품</a>
+    <a href="index.html#capabilities">역량</a>
+    <a href="index.html#contact">문의</a>
+    <a href="board.html" data-board-link>게시판</a>
+    <span class="board-header__email" data-user-email hidden></span>
+    <a href="auth.html" data-auth-link>로그인</a>
+  </nav>
+
+  <main class="board-main">
+    <div class="board-wrap">
+      <p class="board-kicker">Board</p>
+      <div class="board-list-head">
+        <h1 class="board-page-title">게시판</h1>
+        <a href="board-write.html" class="board-write-link">글 작성</a>
+      </div>
+
+      <p id="boardMessage" class="board-message" role="alert" hidden></p>
+      <div id="postList" class="board-index"></div>
+      <div id="emptyState" class="board-empty" hidden>아직 작성된 글이 없습니다.</div>
+    </div>
+  </main>
+
+  <footer class="board-footer">
+    <div class="board-footer__inner">
+      <div>
+        <p class="board-footer__logo">SOREN LAB</p>
+        <p class="board-footer__sub">SOREN LAB</p>
+      </div>
+      <div class="board-footer__meta">
+        <a href="index.html#contact">Contact</a>
+        <p>&copy; 2026 SOREN LAB. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/board-shared.js"></script>
+  <script src="js/session-nav.js"></script>
+  <script src="js/board-nav.js"></script>
+  <script src="js/board-list.js"></script>
+</body>
+</html>
