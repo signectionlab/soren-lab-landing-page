@@ -106,9 +106,14 @@
         return (
           '<article class="admin-board-reply">' +
           '<div class="admin-board-reply__meta">' +
+          '<span class="admin-board-reply__author">' +
           escapeHtml(author) +
           " · " +
           escapeHtml(formatDate(reply.created_at)) +
+          "</span>" +
+          '<button type="button" class="admin-reply-delete" data-delete-reply="' +
+          escapeHtml(reply.id) +
+          '">삭제</button>' +
           "</div>" +
           '<div class="admin-board-reply__content">' +
           escapeHtml(reply.content) +
@@ -157,15 +162,15 @@
       "</div></div></div>" +
       '<div class="admin-board-replies">' +
       '<h3 class="admin-board-replies__title">답글</h3>' +
-      '<div class="admin-board-replies__list">' +
+      '<div class="admin-board-replies__list" id="boardRepliesList">' +
       renderRepliesHtml(activeReplies) +
       "</div>" +
-      '<label class="admin-field admin-field--with-ai">' +
-      '<span class="admin-field__head">' +
+      '<div class="admin-board-compose">' +
       '<span class="admin-field__label">답글 작성</span>' +
-      '<button type="button" class="admin-ai-btn" id="boardAiBtn">AI</button>' +
-      "</span>" +
-      '<textarea id="boardReplyInput" rows="4" placeholder="회원 게시글에 대한 답글을 입력하세요."></textarea></label></div>';
+      '<textarea id="boardReplyInput" rows="4" placeholder="회원 게시글에 대한 답글을 입력하세요."></textarea>' +
+      '<button type="button" class="admin-ai-btn admin-ai-btn--prominent" id="boardAiBtn">' +
+      "✨ AI 답글 초안 작성" +
+      "</button></div></div>";
 
     boardModal.hidden = false;
     boardModal.setAttribute("aria-hidden", "false");
@@ -225,6 +230,28 @@
       setBoardLoadError(error.message);
     } finally {
       boardLoadingState.hidden = true;
+    }
+  }
+
+  async function deleteReply(replyId) {
+    if (!activePost || !replyId) return;
+
+    const reply = activeReplies.find(function (entry) {
+      return entry.id === replyId;
+    });
+    const preview = reply && reply.content ? reply.content.slice(0, 40) : "답글";
+    const confirmed = confirm('"' + preview + '" 답글을 삭제할까요?\n삭제 후 복구할 수 없습니다.');
+    if (!confirmed) return;
+
+    try {
+      const { error } = await supabase.from("board_replies").delete().eq("id", replyId);
+      if (error) {
+        throw new Error(error.message || "답글 삭제에 실패했습니다.");
+      }
+
+      await openBoardDetail(activePost);
+    } catch (error) {
+      alert(error.message);
     }
   }
 
@@ -298,6 +325,14 @@
 
   saveReplyBtn.addEventListener("click", saveReply);
   deletePostBtn.addEventListener("click", deletePost);
+
+  if (boardModalBody) {
+    boardModalBody.addEventListener("click", function (event) {
+      const deleteBtn = event.target.closest("[data-delete-reply]");
+      if (!deleteBtn) return;
+      deleteReply(deleteBtn.getAttribute("data-delete-reply"));
+    });
+  }
 
   boardModal.querySelectorAll("[data-close-board-modal]").forEach(function (el) {
     el.addEventListener("click", closeBoardDetail);
