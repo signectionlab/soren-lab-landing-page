@@ -1,5 +1,6 @@
-# 로컬 전용 스크립트 — 웹에서 직접 접근 불필요
-scripts/
+# 로컬 전용 — build-env.js 는 배포 빌드에 필요하므로 제외하지 않음
+scripts/*
+!scripts/build-env.js
 data/
 .env
 .env.*
