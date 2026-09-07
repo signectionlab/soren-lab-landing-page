@@ -1,7 +1,6 @@
 (function () {
   const form = document.getElementById("contactForm");
   const successEl = document.getElementById("formSuccess");
-  const memberNoticeEl = document.getElementById("formMemberNotice");
   const submitBtn = document.getElementById("submitBtn");
   const submitErrorEl = document.getElementById("formSubmitError");
 
@@ -66,24 +65,6 @@
     submitBtn.textContent = isLoading ? "전송 중..." : "문의 보내기";
   }
 
-  function setFormAccess(session) {
-    const isLoggedIn = !!(session && session.user);
-
-    if (memberNoticeEl) {
-      memberNoticeEl.hidden = !isLoggedIn;
-    }
-
-    form.hidden = isLoggedIn;
-
-    if (isLoggedIn) {
-      clearErrors();
-      setLoading(false);
-      if (successEl) {
-        successEl.classList.remove("is-visible");
-      }
-    }
-  }
-
   function validate() {
     clearErrors();
     let valid = true;
@@ -123,7 +104,7 @@
 
     const sessionResult = await supabase.auth.getSession();
     if (sessionResult.data && sessionResult.data.session) {
-      setFormAccess(sessionResult.data.session);
+      alert("회원문의는 게시판을 이용해주세요");
       return;
     }
 
@@ -160,13 +141,5 @@
       const errorEl = form.querySelector('[data-error="' + input.name + '"]');
       if (errorEl) errorEl.textContent = "";
     });
-  });
-
-  supabase.auth.getSession().then(function (result) {
-    setFormAccess(result.data && result.data.session);
-  });
-
-  supabase.auth.onAuthStateChange(function (_event, session) {
-    setFormAccess(session);
   });
 })();
